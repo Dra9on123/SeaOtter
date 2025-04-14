@@ -1,0 +1,50 @@
+cmake_minimum_required(VERSION 3.20)
+project(SeaOtter)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(SDL_STATIC ON CACHE BOOL "" FORCE)
+set(SDL_SHARED OFF CACHE BOOL "" FORCE)
+set(SDL_TEST OFF CACHE BOOL "" FORCE)
+
+add_subdirectory(thirdparty/sdl2 EXCLUDE_FROM_ALL)
+
+set(SDL_INCLUDE_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/sdl2/include
+    ${CMAKE_BINARY_DIR}/thirdparty/sdl2/include
+)
+
+file(GLOB IMGUI_SOURCES
+    thirdparty/imguidocking/imgui.cpp
+    thirdparty/imguidocking/imgui_draw.cpp
+    thirdparty/imguidocking/imgui_tables.cpp
+    thirdparty/imguidocking/imgui_widgets.cpp
+    thirdparty/imguidocking/imgui_demo.cpp
+    thirdparty/imguidocking/backends/imgui_impl_sdl2.cpp
+    thirdparty/imguidocking/backends/imgui_impl_opengl3.cpp
+)
+
+add_library(imguidocking STATIC ${IMGUI_SOURCES})
+
+target_include_directories(imguidocking PUBLIC
+    thirdparty/imguidocking
+    thirdparty/imguidocking/backends
+    ${SDL_INCLUDE_DIRS}
+)
+
+add_executable(SeaOtter
+    src/main.cpp
+)
+
+target_compile_definitions(SeaOtter PRIVATE SDL_MAIN_HANDLED)
+
+target_include_directories(SeaOtter PRIVATE ${SDL_INCLUDE_DIRS})
+
+find_package(OpenGL REQUIRED)
+
+target_link_libraries(SeaOtter PRIVATE
+    imguidocking
+    SDL2-static
+    OpenGL::GL
+)
