@@ -71,7 +71,7 @@ int main() {
     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
     //IM_ASSERT(font != nullptr);
 
-    bool show_window = true;
+    bool show_window = false;
     ImVec4 clear_color = ImVec4(0.13f, 0.13f, 0.13f, 1.0f);
     bool Done = false;
 
