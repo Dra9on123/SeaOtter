@@ -7,8 +7,10 @@
 
 #include <iostream>
 
-int main() {
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0) {
+int main()
+{
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
+    {
         std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
         return -1;
     }
@@ -23,10 +25,9 @@ int main() {
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
-    auto window_flags = (SDL_WindowFlags) (SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+    auto window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     SDL_Window *window = SDL_CreateWindow("SeaOtter", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720,
                                           window_flags);
-
 
     SDL_GLContext gl_context = SDL_GL_CreateContext(window);
     SDL_GL_MakeCurrent(window, gl_context);
@@ -35,18 +36,19 @@ int main() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
-    (void) io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
-    //io.ConfigViewportsNoAutoMerge = true;
-    //io.ConfigViewportsNoTaskBarIcon = true;
+    (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // Enable Docking
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;   // Enable Multi-Viewport / Platform Windows
+    // io.ConfigViewportsNoAutoMerge = true;
+    // io.ConfigViewportsNoTaskBarIcon = true;
 
-    ImGui::StyleColorsDark();
+    ImGui::StyleColorsClassic();
 
     ImGuiStyle &style = ImGui::GetStyle();
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
         style.WindowRounding = 0.0f;
         style.Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
@@ -63,26 +65,28 @@ int main() {
     // - Read 'docs/FONTS.md' for more instructions and details.
     // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
     // - Our Emscripten build process allows embedding fonts to be accessible at runtime from the "fonts/" folder. See Makefile.emscripten for details.
-    //io.Fonts->AddFontDefault();
-    //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf", 18.0f);
-    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
-    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
-    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
-    //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
-    //IM_ASSERT(font != nullptr);
+    // io.Fonts->AddFontDefault();
+    io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf", 18.0f);
+    // io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
+    // io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
+    // io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
+    // ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
+    // IM_ASSERT(font != nullptr);
 
     bool show_window = false;
-    ImVec4 clear_color = ImVec4(0.13f, 0.13f, 0.13f, 1.0f);
+    ImVec4 clear_color = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
     bool Done = false;
 
-    while (!Done) {
+    while (!Done)
+    {
         // Poll and handle events (inputs, window resize, etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
         // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
         // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
         // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
         SDL_Event event;
-        while (SDL_PollEvent(&event)) {
+        while (SDL_PollEvent(&event))
+        {
             ImGui_ImplSDL2_ProcessEvent(&event);
             if (event.type == SDL_QUIT)
                 Done = true;
@@ -90,7 +94,8 @@ int main() {
                 event.window.windowID == SDL_GetWindowID(window))
                 Done = true;
         }
-        if (SDL_GetWindowFlags(window) & SDL_WINDOW_MINIMIZED) {
+        if (SDL_GetWindowFlags(window) & SDL_WINDOW_MINIMIZED)
+        {
             SDL_Delay(10);
             continue;
         }
@@ -102,7 +107,8 @@ int main() {
         ImGuiID dockspace_id = ImGui::GetID("MainDockSpace");
         ImGui::DockSpaceOverViewport(dockspace_id, ImGui::GetMainViewport());
 
-        if (show_window) {
+        if (show_window)
+        {
             ImGui::Begin("Demo Panel", &show_window);
             ImGui::Text("Hello from SDL2 + ImGui!");
             if (ImGui::Button("Close Me"))
@@ -114,13 +120,14 @@ int main() {
 
         ImGui::Render();
         SDL_GL_MakeCurrent(window, gl_context);
-        glViewport(0, 0, (int) io.DisplaySize.x, (int) io.DisplaySize.y);
+        glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
         glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w,
                      clear_color.z * clear_color.w, clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
             SDL_Window *backup_window = SDL_GL_GetCurrentWindow();
             SDL_GLContext backup_context = SDL_GL_GetCurrentContext();
             ImGui::UpdatePlatformWindows();
