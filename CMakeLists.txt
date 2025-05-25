@@ -1,26 +1,29 @@
 cmake_minimum_required(VERSION 3.20)
 project(SeaOtter)
-set(CMAKE_CXX_STANDARD 17)
 
-add_subdirectory(thirdparty)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Find SDL2 (requires SDL2 installed on your system)
+find_package(SDL2 REQUIRED)
 find_package(OpenGL REQUIRED)
 
-add_executable(SeaOtter
-        src/main.cpp
+include_directories(
+        ${SDL2_INCLUDE_DIRS}
+        ${OPENGL_INCLUDE_DIR}
+        imgui
+        imgui/backends
 )
 
-target_compile_definitions(SeaOtter PRIVATE SDL_MAIN_HANDLED)
-
-# SDL includes (passed through from thirdparty)
-target_include_directories(SeaOtter PRIVATE
-        ${CMAKE_SOURCE_DIR}/thirdparty/sdl2/include
-        ${CMAKE_BINARY_DIR}/thirdparty/sdl2/include
-        ${CMAKE_SOURCE_DIR}/thirdparty/sdlimage
+file(GLOB IMGUI_SOURCES
+        imgui/*.cpp
+        imgui/backends/imgui_impl_sdl.cpp
+        imgui/backends/imgui_impl_opengl3.cpp
 )
 
-target_link_libraries(SeaOtter PRIVATE
-        imguidocking
-        SDL2-static
-        SDL2_image-static
-        OpenGL::GL
+add_executable(${PROJECT_NAME} main.cpp ${IMGUI_SOURCES})
+
+target_link_libraries(${PROJECT_NAME}
+        ${SDL2_LIBRARIES}
+        ${OPENGL_gl_LIBRARY}  # OpenGL library
 )
