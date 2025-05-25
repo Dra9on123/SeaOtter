@@ -3,6 +3,7 @@
 #include "imgui_impl_opengl3.h"
 
 #include <SDL.h>
+//#include <SDL_image.h>
 #include <SDL_opengl.h>
 
 #include <iostream>
@@ -30,6 +31,11 @@ int main()
                                           window_flags);
 
     SDL_GLContext gl_context = SDL_GL_CreateContext(window);
+//    SDL_Surface* icon = IMG_Load("icon.png"); // Use IMG_Load for formats other than BMP
+//    if (!icon) {
+//        SDL_Log("Failed to load icon: %s", IMG_GetError());
+//        // Handle error appropriately (e.g., return, use a default icon)
+//    }
     SDL_GL_MakeCurrent(window, gl_context);
     SDL_GL_SetSwapInterval(1); // Enable vsync
 
