@@ -1,16 +1,16 @@
-#include "imgui.h"
-#include "imgui_impl_sdl2.h"
-#include "imgui_impl_opengl3.h"
+#include <imgui.h>
+#include <backends/imgui_impl_sdl3.h>
+#include <backends/imgui_impl_opengl3.h>
 
-#include <SDL.h>
-#include "SDL_image.h"
-#include <SDL_opengl.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_opengl.h>
+#include <SDL3_image/SDL_image.h>
 
 #include <iostream>
 
 int main()
 {
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
+    if (SDL_Init(SDL_INIT_VIDEO ) != 0)
     {
         std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
         return -1;
@@ -26,16 +26,15 @@ int main()
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
-    auto window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    SDL_Window *window = SDL_CreateWindow("SeaOtter", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720,
-                                          window_flags);
+    auto window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_BORDERLESS);
+    SDL_Window *window = SDL_CreateWindow("SeaOtter", 1280, 720,window_flags);
 
     SDL_GLContext gl_context = SDL_GL_CreateContext(window);
-    SDL_Surface* icon = IMG_Load("icon.png"); // Use IMG_Load for formats other than BMP
-    if (!icon) {
-        SDL_Log("Failed to load icon: %s", IMG_GetError());
-        // Handle error appropriately (e.g., return, use a default icon)
-    }
+//    SDL_Surface* icon = IMG_Load("icon.png"); // Use IMG_Load for formats other than BMP
+//    if (!icon) {
+//        SDL_Log("Failed to load icon: %s", IMG_GetError());
+//        // Handle error appropriately (e.g., return, use a default icon)
+//    }
     SDL_GL_MakeCurrent(window, gl_context);
     SDL_GL_SetSwapInterval(1); // Enable vsync
 
@@ -94,12 +93,18 @@ int main()
         while (SDL_PollEvent(&event))
         {
             ImGui_ImplSDL2_ProcessEvent(&event);
-            if (event.type == SDL_QUIT)
+
+            if (event.type == SDL_EVENT_QUIT)
                 Done = true;
-            if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE &&
-                event.window.windowID == SDL_GetWindowID(window))
-                Done = true;
+
+            if (event.type == SDL_EVENT_WINDOW)
+            {
+                if (event.window.subtype == SDL_EVENT_WINDOW_CLOSE &&
+                    event.window.windowID == SDL_GetWindowID(window))
+                    Done = true;
+            }
         }
+
         if (SDL_GetWindowFlags(window) & SDL_WINDOW_MINIMIZED)
         {
             SDL_Delay(10);
@@ -110,13 +115,12 @@ int main()
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
-        ImGuiID dockspace_id = ImGui::GetID("MainDockSpace");
-        ImGui::DockSpaceOverViewport(dockspace_id, ImGui::GetMainViewport());
+        ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
         if (show_window)
         {
             ImGui::Begin("Demo Panel", &show_window);
-            ImGui::Text("Hello from SDL2 + ImGui!");
+            ImGui::Text("Hello from SDL3 + ImGui!");
             if (ImGui::Button("Close Me"))
                 show_window = false;
             ImGui::End();
@@ -125,16 +129,18 @@ int main()
         ImGui::ShowDemoWindow();
 
         ImGui::Render();
+
         SDL_GL_MakeCurrent(window, gl_context);
         glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
         glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w,
                      clear_color.z * clear_color.w, clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
+
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
-            SDL_Window *backup_window = SDL_GL_GetCurrentWindow();
+            SDL_Window* backup_window = SDL_GL_GetCurrentWindow();
             SDL_GLContext backup_context = SDL_GL_GetCurrentContext();
             ImGui::UpdatePlatformWindows();
             ImGui::RenderPlatformWindowsDefault();
@@ -147,8 +153,11 @@ int main()
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();
     ImGui::DestroyContext();
+
     SDL_GL_DeleteContext(gl_context);
     SDL_DestroyWindow(window);
+
+    IMG_Quit();
     SDL_Quit();
 
     return 0;
